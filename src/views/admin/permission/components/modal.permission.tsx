@@ -4,7 +4,7 @@ import { ALL_MODULES } from "../components/modules";
 import { useEffect } from "react";
 import { API_BASE_URL } from "service/api.config";
 
-interface IPermission {
+export interface IPermission {
     id?: number;
     name?: string;
     apiPath?: string;

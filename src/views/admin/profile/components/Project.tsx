@@ -5,6 +5,7 @@ import Card from "components/card";
 import LessonList from "./LessonList";
 import { useAuth } from "hooks/useAuth";
 import EditCourse from "./EditCourses";
+import { API_BASE_URL } from "service/api.config";
 
 type RowObj = {
   id: number;
@@ -27,11 +28,38 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
   const [loadingLessons, setLoadingLessons] = useState(true);
   const [errorLessons, setErrorLessons] = useState<string | null>(null);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
-  const handleAddLesson = async () => {
+  const [courseId, setCourseId] = useState<number | null>(null);
+  const [showEditCourse, setShowEditCourse] = useState(false);
+  const [courses, setCourses] = useState<RowObj[]>(tableData);
+  const fetchCourses = async () => {
+    // Thay thế bằng API thực tế để lấy danh sách khóa học
+    const response = await fetch("http://localhost:8080/api/v1/courses", {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    console.log(data.data.content);
+    setCourses(data.data.content);
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+  const handleSuccess = () => {
+    fetchCourses(); // Tải lại danh sách khóa học sau khi submit
+  };
+  const handleAddLesson = async (courseId: number) => {
+    setCourseId(courseId);
     setShowModal(true);
     await fetchLessons();
   };
-
+  const handleAddCourse = () => {
+    setEditingCourseId(null); // Đặt courseId là null
+    setShowEditCourse(true); // Hiển thị modal
+  };
   const fetchLessons = async () => {
     try {
       const response = await fetch("http://localhost:8080/api/v1/lessons?page=1&size=10", {
@@ -48,7 +76,6 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
 
       const data = await response.json();
       setLessons(data.data.content);
-      console.log("dữ liệu lesson", data);
     } catch (error) {
       console.error("Error fetching lessons:", error);
       setErrorLessons("Failed to fetch lessons");
@@ -58,9 +85,11 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
   };
   const handleEdit = (id: number) => {
     setEditingCourseId(id);
+    setShowEditCourse(true);
   };
   const handleCloseEdit = () => {
-    setEditingCourseId(null); // Đóng modal chỉnh sửa
+    setShowEditCourse(false); // Đóng modal
+    fetchCourses();
   };
 
   const handleDelete = (row: RowObj) => {
@@ -103,21 +132,27 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
         <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
           <MdModeEditOutline />
         </div>
+        <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={handleAddCourse}
+          >Add</button>
+        </div>
       </div>
       {showModal && (
-        <div className=" fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg h-4/4 w-2/4 max-w-4xl mt-10">
-            <LessonList lessons={lessons} />
+            <LessonList lessons={lessons} courseId={courseId} />
             <button onClick={() => setShowModal(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
-              Đóng
+              Close
             </button>
           </div>
         </div>
       )}
-      {editingCourseId && (
+      {showEditCourse && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg w-3/4 max-w-4xl mt-10">
-            <EditCourse courseId={editingCourseId} onClose={handleCloseEdit} />
+            <EditCourse courseId={editingCourseId} onClose={handleCloseEdit} onSuccess={handleSuccess} />
           </div>
         </div>
       )}
@@ -136,19 +171,19 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row) => (
-              <tr key={row.id}>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.id}</td>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.name}</td>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.intro}</td>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.diffLevel}</td>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.recomLevel}</td>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.courseType}</td>
-                <td className="border-b border-gray-200 py-3 pr-4">{row.speciField}</td>
+            {courses.map(course => (
+              <tr key={course.id}>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.id}</td>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.name}</td>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.intro}</td>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.diffLevel}</td>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.recomLevel}</td>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.courseType}</td>
+                <td className="border-b border-gray-200 py-3 pr-4">{course.speciField}</td>
                 <td className="border-b border-gray-200 py-3 pr-4">
-                  <button onClick={handleAddLesson} className="text-blue-500 hover:underline">Thêm bài học</button>
-                  <button onClick={() => handleEdit(row.id)} className="text-yellow-500 hover:underline ml-2">Edit</button>
-                  <button onClick={() => handleDelete(row)} className="text-red-500 hover:underline ml-2">Delete</button>
+                  <button onClick={() => handleAddLesson(course.id)} className="text-blue-500 hover:underline ml-2">Add</button>
+                  <button onClick={() => handleEdit(course.id)} className="text-yellow-500 hover:underline ml-2">Edit</button>
+                  <button onClick={() => handleDelete(course)} className="text-red-500 hover:underline ml-2">Delete</button>
                 </td>
               </tr>
             ))}

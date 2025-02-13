@@ -18,6 +18,7 @@ import {
   MdLock,
 } from "react-icons/md";
 import PermissionPage from "views/admin/permission/permission";
+import RolePage from "views/admin/role/role";
 
 // Định nghĩa các role
 export type UserRole = 'SUPER_ADMIN' | 'DOMAIN_ADMIN';
@@ -44,7 +45,7 @@ const routes: RouteItem[] = [
   {
     name: "Quản lý tài khoản",
     layout: "/admin",
-    path: "nft-marketplace",
+    path: "account",
     icon: <MdOutlineShoppingCart className="h-6 w-6" />,
     component: <NFTMarketplace />,
   },
@@ -75,14 +76,14 @@ const routes: RouteItem[] = [
     path: "permission",
     icon: <MdLock className="h-6 w-6" />,
     component: <PermissionPage />,
+  },
+  {
+    name: "Role",
+    layout: "/admin",
+    path: "role",
+    icon: <MdLock className="h-6 w-6" />,
+    component: <RolePage />,
   }
-  // {
-  //   name: "Role",
-  //   layout: "/admin",
-  //   path: "role",
-  //   icon: <MdLock className="h-6 w-6" />,
-  //   component: <SignIn />,
-  // }
   // },
   // {
   //   name: "RTL Admin",

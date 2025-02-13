@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "hooks/useAuth";
+import { ModalForm, ProFormSelect, ProFormText } from "@ant-design/pro-components";
+import { Row, Col, message } from "antd";
 
 interface EditCourseProps {
     courseId: number;
     onClose: () => void;
+    onSuccess: () => void;
 }
 
-const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose }) => {
+const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose, onSuccess }) => {
     const { token } = useAuth();
     const [courseData, setCourseData] = useState<any>({
-        id: 0,
         name: "",
         intro: "",
         diffLevel: 0,
@@ -23,18 +25,30 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose }) => {
     useEffect(() => {
         const fetchCourse = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/v1/courses/${courseId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error("Failed to fetch course data");
+                if (courseId) {
+                    const response = await fetch(`http://localhost:8080/api/v1/courses/${courseId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch course data");
+                    }
+                    const data = await response.json();
+                    setCourseData(data.data);
                 }
-                const data = await response.json();
-                console.log("data đằng trên", data);
-                setCourseData(data);
+                else {
+                    setCourseData({
+                        name: "",
+                        intro: "",
+                        diffLevel: 0,
+                        recomLevel: 0,
+                        courseType: "",
+                        speciField: ""
+                    })
+
+                }
             } catch (error) {
                 console.error("Error fetching course data:", error);
                 setError("Failed to fetch course data");
@@ -46,28 +60,41 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose }) => {
         fetchCourse();
     }, [courseId, token]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setCourseData({ ...courseData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (values: any) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/courses/${courseId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(courseData),
-            });
-            console.log("data ở dưới,", courseData);
-            if (!response.ok) {
-                throw new Error("Failed to update course");
-            }
+            if (courseId) {
+                const response = await fetch(`http://localhost:8080/api/v1/courses/${courseId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(values),
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to update course");
+                }
 
-            alert("Course updated successfully!");
-            onClose();
+                message.success("Course updated successfully!");
+                onSuccess();
+                onClose();
+            } else {
+                const response = await fetch(`http://localhost:8080/api/v1/courses`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(values),
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to update course");
+                }
+
+                message.success("Course updated successfully!");
+                onSuccess();
+                onClose();
+            }
         } catch (error) {
             console.error("Error updating course:", error);
             setError("Failed to update course");
@@ -78,80 +105,82 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose }) => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>ID:</label>
-                <input
-                    type="number"
-                    name="id"
-                    value={courseData.id}
-                    onChange={handleChange}
-                    readOnly
-                />
-            </div>
-            <div>
-                <label>Tên khóa học:</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={courseData.name}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div>
-                <label>Giới thiệu:</label>
-                <input
-                    type="text"
-                    name="intro"
-                    value={courseData.intro}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div>
-                <label>Diff Level:</label>
-                <input
-                    type="number"
-                    name="diffLevel"
-                    value={courseData.diffLevel}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div>
-                <label>Recom Level:</label>
-                <input
-                    type="number"
-                    name="recomLevel"
-                    value={courseData.recomLevel}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div>
-                <label>Loại khóa học:</label>
-                <input
-                    type="text"
-                    name="courseType"
-                    value={courseData.courseType}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <div>
-                <label>Special Field:</label>
-                <input
-                    type="text"
-                    name="speciField"
-                    value={courseData.speciField}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-            <button type="submit">Cập nhật</button>
-            <button type="button" onClick={onClose}>Đóng</button>
-        </form>
+        <ModalForm
+            title={<>{courseId ? "Update course" : "Create course"}</>}
+            visible={true}
+            onFinish={handleSubmit}
+            initialValues={courseData}
+            modalProps={{
+                onCancel: onClose,
+                destroyOnClose: true,
+                okText: <>{courseId ? "Update" : "Create"}</>,
+                cancelText: "Cancel"
+            }}
+        >
+            <Row gutter={16}>
+                <Col span={12}>
+                    <ProFormText
+                        name="name"
+                        label="Course name"
+                        placeholder="Enter course name"
+                        rules={[{ required: true, message: 'Please enter course name' }]}
+                    />
+                </Col>
+                <Col span={12}>
+                    <ProFormText
+                        name="intro"
+                        label="Introduction"
+                        placeholder="Enter introduction"
+                        rules={[{ required: true, message: 'Vui lòng nhập giới thiệu' }]}
+                    />
+                </Col>
+                <Col span={12}>
+                    <ProFormText
+                        name="diffLevel"
+                        label="Diff Level"
+                        placeholder="Enter diff level"
+                        rules={[{ required: true, message: 'Please enter diff level' }]}
+                    />
+                </Col>
+                <Col span={12}>
+                    <ProFormText
+                        name="recomLevel"
+                        label="Recom Level"
+                        placeholder="Enter recom level"
+                        rules={[{ required: true, message: 'Please enter recom level' }]}
+                    />
+                </Col>
+                <Col span={12}>
+                    <ProFormSelect
+                        name="courseType"
+                        label="Course type"
+                        valueEnum={{
+                            ALLSKILLS: 'ALLSKILLS',
+                            READING: 'READING',
+                            LISTENING: 'LISTENING',
+                            SPEAKING: 'SPEAKING',
+                            WRITING: 'WRITING',
+                        }}
+                        placeholder="Enter course type"
+                        rules={[{ required: true, message: 'Please enter course type' }]}
+                    />
+                </Col>
+                <Col span={12}>
+                    <ProFormSelect
+                        name="speciField"
+                        label="Special Field"
+                        valueEnum={{
+                            CONSTRUCTION: 'CONSTRUCTION',
+                            IT: 'IT',
+                            ELECTRICITY: 'ELECTRICITY',
+                            ECONOMIC: 'ECONOMIC',
+                        }}
+                        placeholder="Enter special field"
+                        rules={[{ required: true, message: 'Please enter special field' }]}
+                    />
+                </Col>
+            </Row>
+        </ModalForm>
     );
 };
 
