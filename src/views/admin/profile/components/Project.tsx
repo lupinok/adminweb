@@ -92,9 +92,17 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
     fetchCourses();
   };
 
-  const handleDelete = (row: RowObj) => {
-    console.log("Delete:", row);
-    // Thực hiện chức năng xóa
+  const handleDelete = async (row: RowObj) => {
+    const res = await fetch(`${API_BASE_URL}/api/v1/courses/${row.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.ok) {
+      fetchCourses();
+    }
   };
 
   return (
@@ -142,7 +150,7 @@ const Project: React.FC<ProjectProps> = ({ tableData }) => {
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg h-4/4 w-2/4 max-w-4xl mt-10">
-            <LessonList lessons={lessons} courseId={courseId} />
+            <LessonList lessons={lessons} courseId={courseId} fetchLessons={fetchLessons} />
             <button onClick={() => setShowModal(false)} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
               Close
             </button>

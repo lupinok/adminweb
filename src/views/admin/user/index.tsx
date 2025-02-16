@@ -8,7 +8,7 @@ const UserProfilePage: React.FC = () => {
     const { token } = useAuth();
     const { userId } = useParams<{ userId: string }>();
     const [userData, setUserData] = useState<any>(null);
-    const [coursesData, setCoursesData] = useState<any[]>([]);
+    const [coursesData, setCoursesData] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -34,21 +34,34 @@ const UserProfilePage: React.FC = () => {
                 const userData = await userResponse.json();
 
                 console.log("User Data:", userData);
-
-                const coursesResponse = await fetch(`${API_BASE_URL}/api/v1/courses`, {
+                const getCourses = await fetch(`${API_BASE_URL}/api/v1/enrollments/user/${userId}?page=1&size=4&proStatus=false`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                 });
-                const coursesData = await coursesResponse.json();
+                const getCoursesData = await getCourses.json();
 
-                console.log("Courses Data:", coursesData);
+                const courseIds = getCoursesData.data.content.map((item: any) => item.courseId);
+                const courseDetails = await Promise.all(
+                    courseIds.map(async (id: number) => {
+                        const courseResponse = await fetch(`${API_BASE_URL}/api/v1/courses/${id}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                        const courseData = await courseResponse.json();
+                        return courseData.data;
+                    })
+                );
 
+                console.log("Course Details:", courseDetails);
                 // Cập nhật state với dữ liệu nhận được
                 setUserData(userData);
-                setCoursesData(coursesData.data.content || []);
+                setCoursesData(courseDetails || []);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setError("Failed to fetch data");

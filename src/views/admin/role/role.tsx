@@ -38,9 +38,40 @@ const RolePage = () => {
     const [singleRole, setSingleRole] = useState<IRole | null>(null);
 
     useEffect(() => {
-        reloadTable(); // Gọi lại khi component mount hoặc khi currentPage/pageSize thay đổi
-    }, [currentPage, pageSize]);
+        const fetchPermissions = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/permissions`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch permissions");
+                }
+                const data = await response.json();
+                console.log("data:", data.result);
 
+                // Chuyển đổi dữ liệu
+                const transformedData = data.result.reduce((acc: any, curr: any) => {
+                    const moduleIndex = acc.findIndex((item: any) => item.module === curr.module);
+                    if (moduleIndex > -1) {
+                        acc[moduleIndex].permissions.push(curr);
+                    } else {
+                        acc.push({ module: curr.module, permissions: [curr] });
+                    }
+                    return acc;
+                }, []);
+
+                setListPermissions(transformedData);
+            } catch (error) {
+                console.error("Error fetching permissions:", error);
+            }
+        };
+
+        fetchPermissions();
+        reloadTable();
+    }, []);
 
     const handleDeleteRole = async (id: number | undefined) => {
         if (!id) return;
@@ -82,13 +113,14 @@ const RolePage = () => {
         } finally {
             setLoading(false);
         }
+
     }
 
     const columns: ProColumns<IRole>[] = [
         {
             title: 'Id',
             dataIndex: 'id',
-            width: 250,
+            width: 50,
             render: (text, record, index, action) => {
                 return (
                     <span>
@@ -218,7 +250,7 @@ const RolePage = () => {
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
-                listPermissions={listPermissions!}
+                listPermissions={listPermissions}
                 singleRole={singleRole}
                 setSingleRole={setSingleRole}
             />

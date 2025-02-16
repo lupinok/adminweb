@@ -39,56 +39,41 @@ const ModalRole = (props: IProps) => {
         if (permissions) {
             for (const key in permissions) {
                 if (key.match(/^[1-9][0-9]*$/) && permissions[key] === true) {
-                    checkedPermissions.push({ id: key });
+                    checkedPermissions.push({ id: parseInt(key) });
                 }
             }
         }
 
-        if (singleRole?.id) {
-            //update
-            const role = {
-                id: singleRole.id,
-                name, description, active, permissions: checkedPermissions
-            }
-            const res = await fetch(`${API_BASE_URL}/api/v1/roles`, {
-                method: "PUT",
-                body: JSON.stringify(role)
-            });
-            const data = await res.json();
-            console.log("dữ liệu role", data);
-            if (res.ok) {
-                message.success("Cập nhật role thành công");
-                handleReset();
-                reloadTable();
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: data.message
-                });
-            }
+        const role = {
+            id: singleRole?.id,
+            name,
+            description,
+            active,
+            permissions: checkedPermissions
+        };
+
+        console.log("role:", role);
+
+        const res = await fetch(`${API_BASE_URL}/api/v1/roles`, {
+            method: singleRole?.id ? "PUT" : "POST",
+            body: JSON.stringify(role),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            message.success(singleRole?.id ? "Cập nhật role thành công" : "Thêm mới role thành công");
+            handleReset();
+            reloadTable();
         } else {
-            //create
-            const role = {
-                id: singleRole.id,
-                name, description, active, permissions: checkedPermissions
-            }
-            const res = await fetch(`${API_BASE_URL}/api/v1/roles`, {
-                method: "POST",
-                body: JSON.stringify(role)
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: data.message
             });
-            const data = await res.json();
-            if (res.ok) {
-                message.success("Thêm mới role thành công");
-                handleReset();
-                reloadTable();
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: data.message
-                });
-            }
         }
-    }
+    };
 
     const handleReset = async () => {
         form.resetFields();
@@ -108,22 +93,15 @@ const ModalRole = (props: IProps) => {
                     width: 900,
                     keyboard: false,
                     maskClosable: false,
+                    okText: <>{singleRole?.id ? "Cập nhật" : "Tạo mới"}</>,
+                    cancelText: "Hủy"
 
                 }}
                 scrollToFirstError={true}
                 preserve={false}
                 form={form}
                 onFinish={submitRole}
-                submitter={{
-                    render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
-                    submitButtonProps: {
-                        icon: <CheckSquareOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-                    },
-                    searchConfig: {
-                        resetText: "Hủy",
-                        submitText: <>{singleRole?.id ? "Cập nhật" : "Tạo mới"}</>,
-                    }
-                }}
+
             >
                 <Row gutter={16}>
                     <Col lg={12} md={12} sm={24} xs={24}>

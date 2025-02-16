@@ -9,7 +9,7 @@ type RowObj = {
     name: string;
     email: string;
     phone: string;
-    field: number;
+    speciField: string;
     englishlevel: string;
 };
 
@@ -54,11 +54,26 @@ const TableUser: React.FC = () => {
         // Thực hiện chức năng sửa
     };
 
-    const handleDelete = (row: RowObj) => {
-        console.log("Delete:", row);
-        // Thực hiện chức năng xóa
+    const handleDelete = async (id: number) => {
+        if (!id) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/v1/users/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.ok) {
+                setTableData(tableData.filter(row => row.id !== id));
+                console.log("User deleted successfully");
+            } else {
+                console.error("Failed to delete user");
+            }
+        } catch (error) {
+            console.error("Error deleting user:", error);
+        }
     };
-
 
 
     return (
@@ -67,16 +82,10 @@ const TableUser: React.FC = () => {
                 <div className="text-xl font-bold text-navy-700 dark:text-white">
                     User Table
                 </div>
-                <button
-
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                    Tạo tài khoản
-                </button>
             </header>
 
             <div className="mt-8 overflow-x-scroll xl:overflow-x-hidden">
-                <table className="w-full">
+                <table className="w-full" >
                     <thead>
                         <tr className="!border-px !border-gray-400">
                             <th className="border-b border-gray-200 pb-2 pr-4 pt-4 text-start">Name</th>
@@ -93,12 +102,12 @@ const TableUser: React.FC = () => {
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.name}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.email}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.phone}</td>
-                                <td className="border-b border-gray-200 py-3 pr-4">{row.field}</td>
+                                <td className="border-b border-gray-200 py-3 pr-4">{row.speciField}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.englishlevel}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">
                                     <button onClick={() => handleView(row.id)} className="text-blue-500 hover:underline">Xem</button>
                                     <button onClick={() => handleEdit(row)} className="text-yellow-500 hover:underline ml-2">Sửa</button>
-                                    <button onClick={() => handleDelete(row)} className="text-red-500 hover:underline ml-2">Xóa</button>
+                                    <button onClick={() => handleDelete(row.id)} className="text-red-500 hover:underline ml-2">Xóa</button>
                                 </td>
                             </tr>
                         ))}

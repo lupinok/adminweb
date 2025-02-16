@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AuthContextType {
     token: string | null;
-    user: any | null;
-    login: (token: string, userData: any) => void;
+    admin: any | null;
+    login: (token: string, adminData: any) => void;
     logout: () => void;
     setToken: (token: string | null) => void;
 }
@@ -12,26 +12,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [token, setToken] = useState<string | null>(null);
-    const [user, setUser] = useState<any | null>(null);
+    const [admin, setAdmin] = useState<any | null>(null);
 
     console.log("token vừa chạy", token);
     useEffect(() => {
-        localStorage.clear();
+        console.log("Token has been set:", token);
+    }, [token]);
 
-    }, []);
 
-    const login = (newToken: string, userData: any) => {
+    const login = (newToken: string, adminData: any) => {
         setToken(newToken);
-        setUser(userData);
+        setAdmin(adminData);
         localStorage.setItem('admin_token', newToken);
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('admin', JSON.stringify(adminData));
     };
 
     const logout = () => {
         setToken(null);
-        setUser(null);
+        setAdmin(null);
         localStorage.removeItem('admin_token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('admin');
     };
 
     const handleSetToken = (newToken: string | null) => {
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Chỉ render khi đã load xong dữ liệu từ localStorage
 
     return (
-        <AuthContext.Provider value={{ token, user, login, logout, setToken: handleSetToken }}>
+        <AuthContext.Provider value={{ token, admin, login, logout, setToken: handleSetToken }}>
             {children}
         </AuthContext.Provider>
     );

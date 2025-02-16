@@ -11,7 +11,7 @@ type UserProfileProps = {
         id: number;
         name: string;
         email: string;
-        field: string;
+        speciField: string;
         englishlevel: string;
     };
     courses: {
@@ -26,9 +26,6 @@ type UserProfileProps = {
 };
 
 const UserProfile: React.FC<UserProfileProps> = ({ user, courses }) => {
-    // Log dữ liệu nhận được
-    console.log("User Data in UserProfile:", user);
-    console.log("Courses Data in UserProfile:", courses);
 
     const columns = React.useMemo<ColumnDef<typeof courses[number]>[]>(() => [
         { accessorKey: "id", header: () => "ID" },
@@ -54,7 +51,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, courses }) => {
                     <div className="mb-4"><strong>ID:</strong> {user.id}</div>
                     <div className="mb-4"><strong>Tên:</strong> {user.name}</div>
                     <div className="mb-4"><strong>Email:</strong> {user.email}</div>
-                    <div className="mb-4"><strong>Lĩnh vực:</strong> {user.field}</div>
+                    <div className="mb-4"><strong>Lĩnh vực:</strong> {user.speciField}</div>
                     <div className="mb-4"><strong>Trình độ tiếng Anh:</strong> {user.englishlevel}</div>
                 </>
             ) : (
