@@ -9,7 +9,7 @@ type RowObj = {
   name: string;
   email: string;
   password: string;
-  field: number;
+  field: string;
   createAt: string;
   role: {
     id: number;

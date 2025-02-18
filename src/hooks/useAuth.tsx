@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { authService } from '../service/auth.service';
+import { IPermission } from 'views/admin/permission/components/modal.permission';
 
 interface Admin {
     id: number;
     email: string;
     name: string;
+    role: {
+        permissions: IPermission[];
+    }
 }
 
 interface LoginCredentials {

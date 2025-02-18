@@ -106,7 +106,7 @@ const TableUser: React.FC = () => {
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.englishlevel}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">
                                     <button onClick={() => handleView(row.id)} className="text-blue-500 hover:underline">Xem</button>
-                                    <button onClick={() => handleEdit(row)} className="text-yellow-500 hover:underline ml-2">Sửa</button>
+
                                     <button onClick={() => handleDelete(row.id)} className="text-red-500 hover:underline ml-2">Xóa</button>
                                 </td>
                             </tr>

@@ -1,10 +1,13 @@
 import ApiService from './api.service';
 import { API_ENDPOINTS } from './api.config';
-
+import { IPermission } from 'views/admin/permission/components/modal.permission';
 interface Admin {
     id: number;
     email: string;
     name: string;
+    role: {
+        permissions: IPermission[];
+    }
 }
 
 interface LoginResponse {

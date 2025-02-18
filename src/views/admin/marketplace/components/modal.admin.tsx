@@ -9,7 +9,7 @@ export interface IAdmin {
     name: string;
     email: string;
     password?: string;
-    field: number;
+    field?: string;
     role?: {
         id: number;
         name: string;
@@ -187,9 +187,15 @@ const ModalAdmin = (props: IProps) => {
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
-                        <ProFormDigit
+                        <ProFormSelect
                             label="Field"
                             name="field"
+                            valueEnum={{
+                                IT: 'IT',
+                                CONSTRUCTION: 'CONSTRUCTION',
+                                ECONOMIC: 'ECONOMIC',
+                                ELECTRICITY: 'ELECTRICITY',
+                            }}
                             rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
                             placeholder="Nhập field"
                         />

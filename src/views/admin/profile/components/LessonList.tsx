@@ -24,7 +24,6 @@ const LessonList: React.FC<LessonListProps> = ({ lessons, courseId, fetchLessons
     const [openModal, setOpenModal] = useState(false);
     const [selectedLessons, setSelectedLessons] = useState<number[]>([]);
     const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
-    const [lessonData, setLessonData] = useState<Lesson[]>(lessons);
     useEffect(() => {
         // Fetch lessons in the course and set them as selected
         const fetchCourseLessons = async () => {
