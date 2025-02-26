@@ -70,7 +70,7 @@ const ModuleLesson = (props: IProps) => {
 
         if (addedIds.length > 0) {
             try {
-                const response = await fetch(`http://localhost:8080/api/v1/lessons/${listLesson?.id}/questions`, {
+                const response = await fetch(`${API_BASE_URL}/api/v1/lessons/${listLesson?.id}/questions`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -80,21 +80,21 @@ const ModuleLesson = (props: IProps) => {
                 });
 
                 if (response.ok) {
-                    message.success("Thêm câu hỏi thành công");
+                    message.success("Add question successfully");
                 } else {
                     const data = await response.json();
-                    message.error(`Thêm câu hỏi thất bại: ${data.message}`);
+                    message.error(`Add question failed: ${data.message}`);
                 }
             } catch (error) {
                 console.error("Error adding question:", error);
-                message.error("Thêm câu hỏi thất bại");
+                message.error("Add question failed");
             }
         }
 
         if (removedIds.length > 0) {
             try {
                 for (const questionId of removedIds) {
-                    const response = await fetch(`http://localhost:8080/api/v1/lessons/${listLesson?.id}/questions`, {
+                    const response = await fetch(`${API_BASE_URL}/api/v1/lessons/${listLesson?.id}/questions`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -104,15 +104,15 @@ const ModuleLesson = (props: IProps) => {
                     });
 
                     if (response.ok) {
-                        message.success(`Xóa câu hỏi ${questionId} thành công`);
+                        message.success(`Delete question ${questionId} successfully`);
                     } else {
                         const data = await response.json();
-                        message.error(`Xóa câu hỏi ${questionId} thất bại: ${data.message}`);
+                        message.error(`Delete question ${questionId} failed: ${data.message}`);
                     }
                 }
             } catch (error) {
                 console.error("Error removing question:", error);
-                message.error("Xóa câu hỏi thất bại");
+                message.error("Delete question failed");
             }
         }
 
@@ -137,12 +137,12 @@ const ModuleLesson = (props: IProps) => {
 
             const data = await res.json();
             if (res.ok) {
-                message.success("Cập nhật lesson thành công");
+                message.success("Update lesson successfully");
                 handleReset();
                 reloadTable();
             } else {
                 notification.error({
-                    message: 'Có lỗi xảy ra',
+                    message: 'An error occurred',
                     description: data.message
                 });
             }
@@ -158,12 +158,12 @@ const ModuleLesson = (props: IProps) => {
 
             const data = await res.json();
             if (res.ok) {
-                message.success("Tạo mới lesson thành công");
+                message.success("Create lesson successfully");
                 handleReset();
                 reloadTable();
             } else {
                 notification.error({
-                    message: 'Có lỗi xảy ra',
+                    message: 'An error occurred',
                     description: data.message
                 });
             }
@@ -173,7 +173,7 @@ const ModuleLesson = (props: IProps) => {
     return (
         <>
             <ModalForm
-                title={<>{listLesson?.id ? "Cập nhật Lesson" : "Tạo mới Lesson"}</>}
+                title={<>{listLesson?.id ? "Update Lesson" : "Create Lesson"}</>}
                 open={openModal}
                 modalProps={{
                     onCancel: () => { handleReset() },
@@ -182,8 +182,8 @@ const ModuleLesson = (props: IProps) => {
                     width: 900,
                     keyboard: false,
                     maskClosable: false,
-                    okText: <>{listLesson?.id ? "Cập nhật" : "Tạo mới"}</>,
-                    cancelText: "Hủy"
+                    okText: <>{listLesson?.id ? "Update" : "Create"}</>,
+                    cancelText: "Cancel"
 
                 }}
                 scrollToFirstError={true}
@@ -195,12 +195,12 @@ const ModuleLesson = (props: IProps) => {
                 <Row gutter={16}>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormText
-                            label="Tên Lesson"
+                            label="Name Lesson"
                             name="name"
                             rules={[
-                                { required: true, message: 'Vui lòng không bỏ trống' },
+                                { required: true, message: 'Please do not leave blank' },
                             ]}
-                            placeholder="Nhập name"
+                            placeholder="Enter name"
                         />
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
@@ -208,24 +208,27 @@ const ModuleLesson = (props: IProps) => {
                             label="Skill Type"
                             name="skillType"
                             rules={[
-                                { required: true, message: 'Vui lòng không bỏ trống' },
+                                { required: true, message: 'Please do not leave blank' },
                             ]}
-                            placeholder="Nhập skillType"
+                            placeholder="Enter skillType"
                         />
                     </Col>
 
                     <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormSelect
-                            label="Danh sách câu hỏi"
-                            name="questionIds"
-                            options={questions}
-                            mode="multiple"
-                            rules={[
-                                { required: true, message: 'Vui lòng chọn ít nhất một câu hỏi' },
-                            ]}
-                            placeholder="Chọn câu hỏi"
-                            onChange={handleQuestionChange}
-                        />
+                        {listLesson?.id && (
+                            <ProFormSelect
+                                label="List question"
+                                name="questionIds"
+                                options={questions}
+                                mode="multiple"
+                                rules={[
+                                    { required: true, message: 'Please select at least one question' },
+                                ]}
+                                placeholder="Select question"
+                                onChange={handleQuestionChange}
+
+                            />
+                        )}
                     </Col>
                 </Row>
             </ModalForm>

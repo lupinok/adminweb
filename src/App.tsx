@@ -5,7 +5,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "layouts/admin";
 import AuthLayout from "layouts/auth";
 import UserProfilePage from "views/admin/user";
-import { AuthProvider } from "contexts/AuthContext";
 
 const App = () => {
   return (

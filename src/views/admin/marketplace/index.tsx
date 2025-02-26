@@ -1,11 +1,8 @@
-import tableDataTopCreators from "./variables/tableDataTopCreators";
-
 import TableTopCreator from "./components/TableCreator";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "service/api.config";
-import { useAuth } from "hooks/useAuth";
 
-const Marketplace = () => {
+const AdminAccount = () => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,4 +43,4 @@ const Marketplace = () => {
   );
 };
 
-export default Marketplace;
+export default AdminAccount;

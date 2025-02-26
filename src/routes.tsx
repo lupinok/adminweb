@@ -1,8 +1,9 @@
 import React from "react";
+import Access from "views/admin/access";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
-import NFTMarketplace from "views/admin/marketplace";
+import AdminAccount from "views/admin/marketplace";
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/tables";
 
@@ -19,6 +20,7 @@ import {
 } from "react-icons/md";
 import PermissionPage from "views/admin/permission/permission";
 import RolePage from "views/admin/role/role";
+import QuestionPage from "views/admin/question/questions";
 
 // Định nghĩa các role
 export type UserRole = 'SUPER_ADMIN' | 'DOMAIN_ADMIN';
@@ -32,36 +34,66 @@ interface RouteItem {
   component: JSX.Element;
   roles?: UserRole[]; // Thêm roles để kiểm soát quyền truy cập
   secondary?: boolean;
+  permission?: {
+    module: string;
+    resource?: string;
+  };
 }
 
 const routes: RouteItem[] = [
   {
-    name: "Trang chủ",
+    name: "HomePage",
     layout: "/admin",
     path: "default",
     icon: <MdHome className="h-6 w-6" />,
     component: <MainDashboard />,
   },
   {
-    name: "Quản lý tài khoản",
+    name: "Manage admins",
     layout: "/admin",
     path: "account",
     icon: <MdOutlineShoppingCart className="h-6 w-6" />,
-    component: <NFTMarketplace />,
+    component: <AdminAccount />,
+    permission: {
+      module: "SYSTEM_MANAGEMENT"
+    }
   },
   {
-    name: "Quản lý người dùng",
+    name: "Manage users",
     layout: "/admin",
     path: "user",
     icon: <MdBarChart className="h-6 w-6" />,
     component: <DataTables />,
   },
   {
-    name: "Quản lý khóa học",
+    name: "Manage courses",
     layout: "/admin",
-    path: "abc",
+    path: "courses",
     icon: <MdPerson className="h-6 w-6" />,
     component: <Profile />,
+    permission: {
+      module: "CONTENT_MANAGEMENT"
+    }
+  },
+  {
+    name: "Permission",
+    layout: "/admin",
+    path: "permission",
+    icon: <MdLock className="h-6 w-6" />,
+    component: <PermissionPage />,
+    permission: {
+      module: "SYSTEM_MANAGEMENT"
+    }
+  },
+  {
+    name: "Role",
+    layout: "/admin",
+    path: "role",
+    icon: <MdLock className="h-6 w-6" />,
+    component: <RolePage />,
+    permission: {
+      module: "SYSTEM_MANAGEMENT"
+    }
   },
   {
     name: "Sign in",
@@ -71,28 +103,15 @@ const routes: RouteItem[] = [
     component: <SignIn />,
   },
   {
-    name: "Permission",
+    name: "Question",
     layout: "/admin",
-    path: "permission",
-    icon: <MdLock className="h-6 w-6" />,
-    component: <PermissionPage />,
+    path: "question",
+    icon: <MdHome className="h-6 w-6" />,
+    component: <QuestionPage />,
+    permission: {
+      module: "CONTENT_MANAGEMENT"
+    }
   },
-  {
-    name: "Role",
-    layout: "/admin",
-    path: "role",
-    icon: <MdLock className="h-6 w-6" />,
-    component: <RolePage />,
-  }
-  // },
-  // {
-  //   name: "RTL Admin",
-  //   layout: "/rtl",
-  //   path: "rtl",
-  //   icon: <MdHome className="h-6 w-6" />,
-  //   component: <RTLDefault />,
-  //   roles: ['SUPER_ADMIN'], // Chỉ Super Admin mới có quyền truy cập
-  // },
 ];
 
 // Hàm lọc routes dựa trên role của user

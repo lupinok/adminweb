@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import UserProfile from "./components/UserProfile";
 import { API_BASE_URL } from "service/api.config";
 import { useAuth } from "hooks/useAuth";
+import Access from "../access";
 
 const UserProfilePage: React.FC = () => {
     const { token } = useAuth();
@@ -11,6 +12,8 @@ const UserProfilePage: React.FC = () => {
     const [coursesData, setCoursesData] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [reviewsData, setReviewsData] = useState<any>([]);
+    const [scheduleData, setScheduleData] = useState<any>([]);
 
     useEffect(() => {
         console.log("Fetched User ID:", userId);
@@ -59,6 +62,26 @@ const UserProfilePage: React.FC = () => {
                 );
 
                 console.log("Course Details:", courseDetails);
+
+                const reviewData = await fetch(`${API_BASE_URL}/api/v1/reviews/user/${userId}?page=1&size=4`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const revdata = await reviewData.json();
+
+                const scheduleData = await fetch(`${API_BASE_URL}/api/v1/schedules/user/${userId}?page=1&size=4`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const scheData = await scheduleData.json();
+                setScheduleData(scheData.data.content);
+                setReviewsData(revdata.data.content);
                 // Cập nhật state với dữ liệu nhận được
                 setUserData(userData);
                 setCoursesData(courseDetails || []);
@@ -88,7 +111,8 @@ const UserProfilePage: React.FC = () => {
     return (
         <div className="p-6">
 
-            <UserProfile user={userData} courses={coursesData} />
+            <UserProfile user={userData} courses={coursesData} reviews={reviewsData} schedules={scheduleData} />
+
 
         </div>
     );

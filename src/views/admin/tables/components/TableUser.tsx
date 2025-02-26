@@ -3,6 +3,7 @@ import Card from "components/card";
 import { API_BASE_URL, API_ENDPOINTS } from "service/api.config"; // Import API config
 import { useAuth } from "hooks/useAuth"; // Import useAuth hook
 import { useNavigate } from "react-router-dom";
+import Access from "views/admin/access";
 
 type RowObj = {
     id: number;
@@ -105,9 +106,13 @@ const TableUser: React.FC = () => {
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.speciField}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">{row.englishlevel}</td>
                                 <td className="border-b border-gray-200 py-3 pr-4">
-                                    <button onClick={() => handleView(row.id)} className="text-blue-500 hover:underline">Xem</button>
-
-                                    <button onClick={() => handleDelete(row.id)} className="text-red-500 hover:underline ml-2">Xóa</button>
+                                    <button onClick={() => handleView(row.id)} className="text-blue-500 hover:underline">View</button>
+                                    <Access
+                                        permission={{ module: "SYSTEM_MANAGEMENT" }}
+                                        hideChildren={true}
+                                    >
+                                        <button onClick={() => handleDelete(row.id)} className="text-red-500 hover:underline ml-2">Delete</button>
+                                    </Access>
                                 </td>
                             </tr>
                         ))}

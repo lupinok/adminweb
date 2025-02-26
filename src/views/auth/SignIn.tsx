@@ -38,7 +38,7 @@ const SignIn = () => {
       navigate('/admin/default', { replace: true });
 
     } catch (err) {
-      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      setError('Login failed. Please check your information.');
       console.error('Login failed:', err);
     } finally {
       setLoading(false);
@@ -95,19 +95,13 @@ const SignIn = () => {
                 Keep me logged In
               </p>
             </div>
-            <a
-              className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
-              href=" "
-            >
-              Forgot Password?
-            </a>
           </div>
           <button
             type="submit"
             disabled={loading}
             className="linear mt-2 w-full rounded-xl bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200"
           >
-            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
       </div>

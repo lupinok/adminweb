@@ -61,19 +61,19 @@ const PermissionPage = () => {
             });
 
             if (res.ok) {
-                message.success('Xóa Permission thành công');
+                message.success('Delete permission successfully');
                 reloadTable();
             } else {
                 const errorData = await res.json();
                 notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: errorData.error || 'Không thể xóa permission'
+                    message: 'An error occurred',
+                    description: errorData.error || 'Cannot delete permission'
                 });
             }
         } catch (error) {
             notification.error({
-                message: 'Lỗi mạng',
-                description: 'Không thể kết nối đến máy chủ'
+                message: 'Network error',
+                description: 'Cannot connect to server'
             });
         }
         console.log("delete");
@@ -163,11 +163,11 @@ const PermissionPage = () => {
                         }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
                     <Popconfirm
                         placement="leftTop"
-                        title={"Xác nhận xóa permission"}
-                        description={"Bạn có chắc chắn muốn xóa permission này ?"}
+                        title={"Confirm delete permission"}
+                        description={"Are you sure you want to delete this permission ?"}
                         onConfirm={() => handleDeletePermission(entity.id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
+                        okText="Confirm"
+                        cancelText="Cancel"
                     >
                         <span style={{ cursor: "pointer", margin: "0 10px" }}>
                             <DeleteOutlined
@@ -186,7 +186,7 @@ const PermissionPage = () => {
         <div>
             <DataTable<IPermission>
                 actionRef={tableRef}
-                headerTitle="Danh sách Permissions "
+                headerTitle="List Permissions "
                 rowKey="id"
                 loading={loading}
                 columns={columns}
@@ -212,7 +212,7 @@ const PermissionPage = () => {
                                 type="primary"
                                 onClick={() => setOpenModal(true)}
                             >
-                                Thêm mới
+                                Add
                             </Button>
                         );
                     }}

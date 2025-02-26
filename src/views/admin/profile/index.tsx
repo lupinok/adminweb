@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Project from "./components/Project";
 import { API_BASE_URL } from "service/api.config";
 import { useAuth } from "hooks/useAuth";
-
+import Access from "../access";
+import { ALL_PERMISSIONS } from "../permission/components/modules";
 const ProfileOverview = () => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +58,9 @@ const ProfileOverview = () => {
 
       <div className=" h-full  gap-5 lg:!grid-cols-12">
         <div className="col-span-5 lg:col-span-6 lg:mb-0 3xl:col-span-4">
+
           <Project tableData={tableData} />
+
         </div>
       </div>
     </div>

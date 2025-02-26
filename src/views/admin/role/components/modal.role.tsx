@@ -1,10 +1,8 @@
 import { IPermission } from "views/admin/permission/components/modal.permission";
 import { FooterToolbar, ModalForm, ProCard, ProFormSelect, ProFormSwitch, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
 import { Col, Form, Row, message, notification } from "antd";
-import { useEffect } from "react";
 import { API_BASE_URL } from "service/api.config";
 import ModuleApi from "./modal.api";
-import { CheckSquareOutlined } from "@ant-design/icons";
 
 export interface IRole {
     id?: number;
@@ -64,12 +62,12 @@ const ModalRole = (props: IProps) => {
 
         const data = await res.json();
         if (res.ok) {
-            message.success(singleRole?.id ? "Cập nhật role thành công" : "Thêm mới role thành công");
+            message.success(singleRole?.id ? "Update role successfully" : "Create role successfully");
             handleReset();
             reloadTable();
         } else {
             notification.error({
-                message: 'Có lỗi xảy ra',
+                message: 'An error occurred',
                 description: data.message
             });
         }
@@ -84,7 +82,7 @@ const ModalRole = (props: IProps) => {
     return (
         <>
             <ModalForm
-                title={<>{singleRole?.id ? "Cập nhật Role" : "Tạo mới Role"}</>}
+                title={<>{singleRole?.id ? "Update Role" : "Create Role"}</>}
                 open={openModal}
                 modalProps={{
                     onCancel: () => { handleReset() },
@@ -93,8 +91,8 @@ const ModalRole = (props: IProps) => {
                     width: 900,
                     keyboard: false,
                     maskClosable: false,
-                    okText: <>{singleRole?.id ? "Cập nhật" : "Tạo mới"}</>,
-                    cancelText: "Hủy"
+                    okText: <>{singleRole?.id ? "Update" : "Create"}</>,
+                    cancelText: "Cancel"
 
                 }}
                 scrollToFirstError={true}
@@ -106,17 +104,17 @@ const ModalRole = (props: IProps) => {
                 <Row gutter={16}>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormText
-                            label="Tên Role"
+                            label="Name Role"
                             name="name"
                             rules={[
-                                { required: true, message: 'Vui lòng không bỏ trống' },
+                                { required: true, message: 'Please do not leave blank' },
                             ]}
                             placeholder="Nhập name"
                         />
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormSwitch
-                            label="Trạng thái"
+                            label="Status"
                             name="active"
                             checkedChildren="ACTIVE"
                             unCheckedChildren="INACTIVE"
@@ -129,10 +127,10 @@ const ModalRole = (props: IProps) => {
 
                     <Col span={24}>
                         <ProFormTextArea
-                            label="Miêu tả"
+                            label="Description"
                             name="description"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập miêu tả role"
+                            rules={[{ required: true, message: 'Please do not leave blank' }]}
+                            placeholder="Enter description"
                             fieldProps={{
                                 autoSize: { minRows: 2 }
                             }}
@@ -140,8 +138,8 @@ const ModalRole = (props: IProps) => {
                     </Col>
                     <Col span={24}>
                         <ProCard
-                            title="Quyền hạn"
-                            subTitle="Các quyền hạn được phép cho vai trò này"
+                            title="Permissions"
+                            subTitle="The permissions allowed for this role"
                             headStyle={{ color: '#d81921' }}
                             style={{ marginBottom: 20 }}
                             headerBordered

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "hooks/useAuth";
 import { ModalForm, ProFormSelect, ProFormText } from "@ant-design/pro-components";
 import { Row, Col, message } from "antd";
+import { API_BASE_URL } from "service/api.config";
 
 interface EditCourseProps {
     courseId: number;
@@ -26,7 +27,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose, onSuccess })
         const fetchCourse = async () => {
             try {
                 if (courseId) {
-                    const response = await fetch(`http://localhost:8080/api/v1/courses/${courseId}`, {
+                    const response = await fetch(`${API_BASE_URL}/api/v1/courses/${courseId}`, {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -63,7 +64,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose, onSuccess })
     const handleSubmit = async (values: any) => {
         try {
             if (courseId) {
-                const response = await fetch(`http://localhost:8080/api/v1/courses/${courseId}`, {
+                const response = await fetch(`${API_BASE_URL}/api/v1/courses/${courseId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose, onSuccess })
                 onSuccess();
                 onClose();
             } else {
-                const response = await fetch(`http://localhost:8080/api/v1/courses`, {
+                const response = await fetch(`${API_BASE_URL}/api/v1/courses`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -131,7 +132,7 @@ const EditCourse: React.FC<EditCourseProps> = ({ courseId, onClose, onSuccess })
                         name="intro"
                         label="Introduction"
                         placeholder="Enter introduction"
-                        rules={[{ required: true, message: 'Vui lòng nhập giới thiệu' }]}
+                        rules={[{ required: true, message: 'Please enter introduction' }]}
                     />
                 </Col>
                 <Col span={12}>

@@ -37,22 +37,19 @@ const TableTopCreators: React.FC<TableTopCreatorsProps> = ({ tableData, reloadTa
   };
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/admins/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/v1/admins/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
-
-
-      message.success("Xóa admin thành công", 5);
+      message.success("Delete admin successfully", 5);
       reloadTable(); // Reload the table data
     } catch (error) {
       console.error("Error deleting admin:", error);
       notification.error({
-        message: 'Có lỗi xảy ra',
-        description: 'Không thể xóa admin',
+        message: 'An error occurred',
+        description: 'Cannot delete admin',
       });
     }
   };
@@ -68,7 +65,7 @@ const TableTopCreators: React.FC<TableTopCreatorsProps> = ({ tableData, reloadTa
           onClick={handleCreate}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Tạo tài khoản
+          Create account
         </button>
       </header>
 
@@ -93,11 +90,11 @@ const TableTopCreators: React.FC<TableTopCreatorsProps> = ({ tableData, reloadTa
                   {row.role.name}
                 </td>
                 <td className="border-b border-gray-200 py-3 pr-4">
-                  <button onClick={() => handleEdit(row)} className="text-yellow-500 hover:underline ml-2">Sửa</button>
+                  <button onClick={() => handleEdit(row)} className="text-yellow-500 hover:underline ml-2">Update</button>
                   <button
                     onClick={() => handleDelete(row.id)}
                     className="text-red-500 hover:underline ml-2"
-                  >Xóa</button>
+                  >Delete</button>
                 </td>
               </tr>
             ))}

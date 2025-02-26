@@ -164,12 +164,12 @@ const Navbar = (props: {
               <div className="mt-3 h-px w-full bg-gray-200 dark:bg-white/20 " />
 
               <div className="mt-3 ml-4 flex flex-col">
-                <Link
+                {/* <Link
                   to="/admin/profile"
                   className="text-sm text-gray-800 dark:text-white hover:dark:text-white"
                 >
                   Thông tin cá nhân
-                </Link>
+                </Link> */}
                 <button
                   onClick={handleLogout}
                   className="mt-3 text-sm font-medium text-red-500 hover:text-red-600 text-left"

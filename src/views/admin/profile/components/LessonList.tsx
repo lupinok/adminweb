@@ -2,7 +2,7 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useAuth } from "hooks/useAuth";
 import React, { useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "service/api.config";
-import { message, Popconfirm } from "antd";
+import { Button, message, Popconfirm } from "antd";
 import ModuleLesson from "./module.lesson";
 import { notification } from "antd";
 
@@ -117,7 +117,11 @@ const LessonList: React.FC<LessonListProps> = ({ lessons, courseId, fetchLessons
     };
     return (
         <div className="mt-10">
-            <h3 className="text-lg font-bold">Lesson List</h3>
+            <div className="flex justify-between items-center">
+                <h3 className="text-lg font-bold">Lesson List</h3>
+                <Button type="primary" onClick={() => setOpenModal(true)}>Add Lesson</Button>
+            </div>
+
             <div className="mt-8 overflow-x-scroll xl:overflow-x-hidden">
                 <table className="w-full">
                     <thead>
@@ -154,11 +158,11 @@ const LessonList: React.FC<LessonListProps> = ({ lessons, courseId, fetchLessons
                                         }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
                                     <Popconfirm
                                         placement="leftTop"
-                                        title={"Xác nhận xóa role"}
-                                        description={"Bạn có chắc chắn muốn xóa role này ?"}
+                                        title={"Confirm delete lesson"}
+                                        description={"Are you sure you want to delete this lesson ?"}
                                         onConfirm={() => console.log("oke")}
-                                        okText="Xác nhận"
-                                        cancelText="Hủy"
+                                        okText="Ok"
+                                        cancelText="Cancel"
                                     >
                                         <span style={{ cursor: "pointer", margin: "0 10px" }}>
                                             <DeleteOutlined

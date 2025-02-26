@@ -67,13 +67,13 @@ const ModalAdmin = (props: IProps) => {
             const responseData = await res.json();
 
             if (res.ok) {
-                message.success("Cập nhật admin thành công");
+                message.success("Update admin successfully");
                 handleReset();
                 reloadTable();
             } else {
                 notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: responseData.message || 'Lỗi không xác định',
+                    message: 'An error occurred',
+                    description: responseData.message || 'Unknown error',
                 });
             }
         } else {
@@ -95,7 +95,7 @@ const ModalAdmin = (props: IProps) => {
 
             const responseData = await res.json();
             if (res.ok) {
-                message.success("Thêm mới admin thành công");
+                message.success("Add new admin successfully");
                 handleReset();
                 reloadTable();
             } else {
@@ -135,7 +135,7 @@ const ModalAdmin = (props: IProps) => {
     return (
         <>
             <ModalForm
-                title={<>{dataInit?.id ? "Cập nhật User" : "Tạo mới User"}</>}
+                title={<>{dataInit?.id ? "Update Admin" : "Create Admin"}</>}
                 open={openModal}
                 modalProps={{
                     onCancel: () => { handleReset() },
@@ -144,8 +144,8 @@ const ModalAdmin = (props: IProps) => {
                     width: 900,
                     keyboard: false,
                     maskClosable: false,
-                    okText: <>{dataInit?.id ? "Cập nhật" : "Tạo mới"}</>,
-                    cancelText: "Hủy"
+                    okText: <>{dataInit?.id ? "Update" : "Create"}</>,
+                    cancelText: "Cancel"
                 }}
                 scrollToFirstError={true}
                 preserve={false}
@@ -163,10 +163,10 @@ const ModalAdmin = (props: IProps) => {
                             label="Email"
                             name="email"
                             rules={[
-                                { required: true, message: 'Vui lòng không bỏ trống' },
-                                { type: 'email', message: 'Vui lòng nhập email hợp lệ' }
+                                { required: true, message: 'Please do not leave blank' },
+                                { type: 'email', message: 'Please enter a valid email' }
                             ]}
-                            placeholder="Nhập email"
+                            placeholder="Enter email"
                         />
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
@@ -174,16 +174,16 @@ const ModalAdmin = (props: IProps) => {
                             disabled={dataInit?.id ? true : false}
                             label="Password"
                             name="password"
-                            rules={[{ required: dataInit?.id ? false : true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập password"
+                            rules={[{ required: dataInit?.id ? false : true, message: 'Please do not leave blank' }]}
+                            placeholder="Enter password"
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProFormText
-                            label="Tên hiển thị"
+                            label="Display name"
                             name="name"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập tên hiển thị"
+                            rules={[{ required: true, message: 'Please do not leave blank' }]}
+                            placeholder="Enter display name"
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
@@ -196,15 +196,15 @@ const ModalAdmin = (props: IProps) => {
                                 ECONOMIC: 'ECONOMIC',
                                 ELECTRICITY: 'ELECTRICITY',
                             }}
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập field"
+                            rules={[{ required: true, message: 'Please do not leave blank' }]}
+                            placeholder="Enter field"
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProForm.Item
                             name="role"
-                            label="Vai trò"
-                            rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+                            label="Role"
+                            rules={[{ required: true, message: 'Please select a role!' }]}
 
                         >
                             <DebounceSelect
@@ -212,7 +212,7 @@ const ModalAdmin = (props: IProps) => {
                                 showSearch
                                 defaultValue={roles}
                                 value={roles}
-                                placeholder="Chọn công vai trò"
+                                placeholder="Select role"
                                 fetchOptions={fetchRoleList}
                                 onChange={(newValue: any) => {
                                     setRoles(newValue as IRoleOption[]);

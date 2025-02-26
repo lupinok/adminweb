@@ -14,6 +14,7 @@ import { ALL_PERMISSIONS } from "../permission/components/modules";
 //import { sfLike } from "spring-filter-query-builder";
 import { groupByPermission } from "../permission/components/color.method";
 import { API_BASE_URL } from "service/api.config";
+import Access from "../access";
 
 const RolePage = () => {
 
@@ -82,19 +83,19 @@ const RolePage = () => {
             });
 
             if (res.ok) {
-                message.success('Xóa Role thành công');
+                message.success('Delete role successfully');
                 reloadTable();
             } else {
                 const errorData = await res.json();
                 notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: errorData.error || 'Không thể xóa permission'
+                    message: 'An error occurred',
+                    description: errorData.error || 'Cannot delete permission'
                 });
             }
         } catch (error) {
             notification.error({
-                message: 'Lỗi mạng',
-                description: 'Không thể kết nối đến máy chủ'
+                message: 'Network error',
+                description: 'Cannot connect to server'
             });
         }
         console.log("delete");
@@ -136,7 +137,7 @@ const RolePage = () => {
             sorter: true,
         },
         {
-            title: 'Trạng thái',
+            title: 'Status',
             dataIndex: 'active',
             render(dom, entity, index, action, schema) {
                 return <>
@@ -178,83 +179,97 @@ const RolePage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
-                        onClick={() => {
-                            setSingleRole(entity);
-                            setOpenModal(true);
-                        }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-
-                    <Popconfirm
-                        placement="leftTop"
-                        title={"Xác nhận xóa role"}
-                        description={"Bạn có chắc chắn muốn xóa role này ?"}
-                        onConfirm={() => handleDeleteRole(entity.id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
+                    <Access
+                        permission={ALL_PERMISSIONS.SYSTEM_MANAGEMENT.PERMISSIONS.UPDATE}
                     >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-                        </span>
-                    </Popconfirm>
+                        <EditOutlined
+                            style={{
+                                fontSize: 20,
+                                color: '#ffa500',
+                            }}
+                            type=""
+                            onClick={() => {
+                                setSingleRole(entity);
+                                setOpenModal(true);
+                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    </Access>
+                    <Access
+                        permission={ALL_PERMISSIONS.SYSTEM_MANAGEMENT.PERMISSIONS.DELETE}
+                    >
+                        <Popconfirm
+                            placement="leftTop"
+                            title={"Confirm delete role"}
+                            description={"Are you sure you want to delete this role ?"}
+                            onConfirm={() => handleDeleteRole(entity.id)}
+                            okText="Confirm"
+                            cancelText="Cancel"
+                        >
+                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
+                                <DeleteOutlined
+                                    style={{
+                                        fontSize: 20,
+                                        color: '#ff4d4f',
+                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                            </span>
+                        </Popconfirm>
+                    </Access>
                 </Space>
             ),
 
         },
     ];
     return (
-        <div>
+        <Access
+            permission={ALL_PERMISSIONS.SYSTEM_MANAGEMENT.PERMISSIONS.GET_PAGINATE}
+        >
+            <div>
 
-            <DataTable<IRole>
-                actionRef={tableRef}
-                headerTitle="Danh sách Roles (Vai Trò)"
-                rowKey="id"
-                loading={loading}
-                columns={columns}
-                dataSource={dataSource}
-                scroll={{ x: true }}
-                pagination={{
-                    current: currentPage,
-                    total: total,
-                    pageSize: pageSize,
-                    onChange: (page, size) => {
-                        setCurrentPage(page); // Cập nhật trang hiện tại
-                        setPageSize(size); // Cập nhật kích thước trang
-                    },
-                    showSizeChanger: true,
-                }
-                }
-                rowSelection={false}
-                toolBarRender={(_action, _rows): any => {
-                    return (
-                        <Button
-                            icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
-                            type="primary"
-                            onClick={() => setOpenModal(true)}
-                        >
-                            Thêm mới
-                        </Button>
-                    );
-                }}
-            />
-            <ModalRole
-                openModal={openModal}
-                setOpenModal={setOpenModal}
-                reloadTable={reloadTable}
-                listPermissions={listPermissions}
-                singleRole={singleRole}
-                setSingleRole={setSingleRole}
-            />
-        </div>
+                <DataTable<IRole>
+                    actionRef={tableRef}
+                    headerTitle="List Roles "
+                    rowKey="id"
+                    loading={loading}
+                    columns={columns}
+                    dataSource={dataSource}
+                    scroll={{ x: true }}
+                    pagination={{
+                        current: currentPage,
+                        total: total,
+                        pageSize: pageSize,
+                        onChange: (page, size) => {
+                            setCurrentPage(page); // Cập nhật trang hiện tại
+                            setPageSize(size); // Cập nhật kích thước trang
+                        },
+                        showSizeChanger: true,
+                    }
+                    }
+                    rowSelection={false}
+                    toolBarRender={(_action, _rows): any => {
+                        return (
+                            <Access
+                                permission={ALL_PERMISSIONS.SYSTEM_MANAGEMENT.PERMISSIONS.CREATE}
+                            >
+                                <Button
+                                    icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                                    type="primary"
+                                    onClick={() => setOpenModal(true)}
+                                >
+                                    Add
+                                </Button>
+                            </Access>
+                        );
+                    }}
+                />
+                <ModalRole
+                    openModal={openModal}
+                    setOpenModal={setOpenModal}
+                    reloadTable={reloadTable}
+                    listPermissions={listPermissions}
+                    singleRole={singleRole}
+                    setSingleRole={setSingleRole}
+                />
+            </div>
+        </Access>
     )
 }
 
